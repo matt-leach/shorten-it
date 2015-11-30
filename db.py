@@ -1,8 +1,14 @@
 from secret import DB_DSN
 import psycopg2
 
+UNIQUE_POSTGRES_CODE = '23505'
+
 
 class DuplicateError(Exception):
+    pass
+
+
+class NotFoundError(Exception):
     pass
 
 
@@ -10,18 +16,13 @@ def drop_table():
     """
     drops the table 'redirects' if it exists
     """
-    try:
-        sql = 'drop table if exists redirects;'
-        conn = psycopg2.connect(dsn=DB_DSN)
-        cur = conn.cursor()
-        cur.execute(sql)
-        conn.commit()
-    except psycopg2.Error as e:
-        print e.message
-        raise
-    else:
-        cur.close()
-        conn.close()
+    sql = 'drop table if exists redirects;'
+    conn = psycopg2.connect(dsn=DB_DSN)
+    cur = conn.cursor()
+    cur.execute(sql)
+    conn.commit()
+    cur.close()
+    conn.close()
 
 
 def create_table():
@@ -34,17 +35,12 @@ def create_table():
             original_url TEXT, \
             hash TEXT UNIQUE \
     )'
-    try:
-        conn = psycopg2.connect(dsn=DB_DSN)
-        cur = conn.cursor()
-        cur.execute(sql)
-        conn.commit()
-    except psycopg2.Error as e:
-        print e.message
-        raise
-    else:
-        cur.close()
-        conn.close()
+    conn = psycopg2.connect(dsn=DB_DSN)
+    cur = conn.cursor()
+    cur.execute(sql)
+    conn.commit()
+    cur.close()
+    conn.close()
 
 
 def create_redirect(url, hashed):
@@ -56,10 +52,27 @@ def create_redirect(url, hashed):
         conn.commit()
 
     except psycopg2.Error as e:
-        if e.pgcode == '23505':
+        if e.pgcode == UNIQUE_POSTGRES_CODE:
             raise DuplicateError()
         else:
             raise
     else:
         cur.close()
         conn.close()
+
+
+def get_redirect(hashed):
+    ''' returns an url from redirects given a hash. Riases NotFoundError if no such hash exists '''
+    sql = "SELECT original_url FROM redirects WHERE hash = %s;"
+    conn = psycopg2.connect(dsn=DB_DSN)
+    cur = conn.cursor()
+    cur.execute(sql, (hashed,))
+    conn.commit()
+    rs = cur.fetchall()
+    if len(rs) == 1:
+        return rs[0][0]
+    else:
+        raise NotFoundError
+
+    cur.close()
+    conn.close()
