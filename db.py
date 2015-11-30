@@ -12,11 +12,11 @@ class NotFoundError(Exception):
     pass
 
 
-def drop_table():
+def drop_table(name):
     """
-    drops the table 'redirects' if it exists
+    drops the table 'name' if it exists
     """
-    sql = 'drop table if exists redirects;'
+    sql = 'drop table if exists {};'.format(name)
     conn = psycopg2.connect(dsn=DB_DSN)
     cur = conn.cursor()
     cur.execute(sql)
@@ -25,7 +25,7 @@ def drop_table():
     conn.close()
 
 
-def create_table():
+def create_redirects_table():
     """
     creates a postgres table 'redirects' with columns
         original_url TEXT,
@@ -34,6 +34,24 @@ def create_table():
     sql = 'create table redirects ( \
             original_url TEXT, \
             hash TEXT UNIQUE \
+    )'
+    conn = psycopg2.connect(dsn=DB_DSN)
+    cur = conn.cursor()
+    cur.execute(sql)
+    conn.commit()
+    cur.close()
+    conn.close()
+
+
+def create_visits_table():
+    """
+    creates a postgres table 'visits' with columns
+        hash TEXT,
+        ts TIMESTAMP
+    """
+    sql = 'create table visits ( \
+            hash TEXT, \
+            ts TIMESTAMP \
     )'
     conn = psycopg2.connect(dsn=DB_DSN)
     cur = conn.cursor()
@@ -69,10 +87,33 @@ def get_redirect(hashed):
     cur.execute(sql, (hashed,))
     conn.commit()
     rs = cur.fetchall()
+    cur.close()
+    conn.close()
     if len(rs) == 1:
         return rs[0][0]
     else:
         raise NotFoundError
 
+
+def add_visit(hashed):
+    sql = "INSERT INTO visits (hash, ts) VALUES(%s, CURRENT_TIMESTAMP)"
+    conn = psycopg2.connect(dsn=DB_DSN)
+    cur = conn.cursor()
+    cur.execute(sql, (hashed, ))
+    conn.commit()
     cur.close()
     conn.close()
+
+
+def get_visits(hashed):
+    sql = "SELECT count(*) FROM visits WHERE hash = %s;"
+    conn = psycopg2.connect(dsn=DB_DSN)
+    cur = conn.cursor()
+    cur.execute(sql, (hashed,))
+    conn.commit()
+    rs = cur.fetchall()
+    count = rs[0][0]
+
+    cur.close()
+    conn.close()
+    return count

@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 import flask
-from db import create_redirect, DuplicateError, get_redirect, NotFoundError
+from db import create_redirect, DuplicateError, get_redirect, NotFoundError, add_visit, get_visits
 import json
 from hasher import create_hash
 
@@ -36,12 +36,22 @@ def create_short():
     return jsonify({'redirect': hashed})
 
 
+@app.route('/data')
+def get_data():
+    hashed = request.args.get('hash')
+    if hashed is None:
+        return jsonify({'error': "No 'hashed' parameter"})
+    count = get_visits(hashed)
+    return jsonify({'count': count})
+
+
 @app.route('/<hashed>')
 def redirect(hashed):
     try:
         redirect_url = get_redirect(hashed)
     except NotFoundError:
         return jsonify({"error": "hash '{}' does not exist".format(hashed)})
+    add_visit(hashed)
     return flask.redirect('https://' + redirect_url)  # TODO: fix https://
 
 

@@ -22,6 +22,14 @@ def visit_url(hashed):
     resp = h.getresponse()
     return resp.read()
 
+
+def see_analytics(hashed):
+    h = httplib.HTTPConnection(SERVER)
+    h.request('GET', 'http://'+SERVER+'/data?hash=' + hashed)
+    resp = h.getresponse()
+    return resp.read()
+
+
 if __name__ == '__main__':
     print '----------------'
     print 'try to create shortened url with no url parameter:'
@@ -41,3 +49,8 @@ if __name__ == '__main__':
     print '----------------'
     print 'visit a wrong code'
     print visit_url('asdf')
+    print 'see count at /g'
+    print see_analytics('g')
+    print 'now visit g once, see increase'
+    visit_url('g')
+    print see_analytics('g')
