@@ -2,6 +2,10 @@ from secret import DB_DSN
 import psycopg2
 
 
+class DuplicateError(Exception):
+    pass
+
+
 def drop_table():
     """
     drops the table 'redirects' if it exists
@@ -14,6 +18,7 @@ def drop_table():
         conn.commit()
     except psycopg2.Error as e:
         print e.message
+        raise
     else:
         cur.close()
         conn.close()
@@ -36,6 +41,7 @@ def create_table():
         conn.commit()
     except psycopg2.Error as e:
         print e.message
+        raise
     else:
         cur.close()
         conn.close()
@@ -50,7 +56,10 @@ def create_redirect(url, hashed):
         conn.commit()
 
     except psycopg2.Error as e:
-        print e.message
+        if e.pgcode == '23505':
+            raise DuplicateError()
+        else:
+            raise
     else:
         cur.close()
         conn.close()
