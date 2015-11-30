@@ -13,16 +13,14 @@ def create_shortened_url(data):
     data = json.dumps(data)
     h.request('POST', 'http://'+SERVER+'/shorten', body=data)
     resp = h.getresponse()
-    out = resp.read()
-    return out
+    return resp.read()
 
 
 def visit_url(hashed):
     h = httplib.HTTPConnection(SERVER)
     h.request('GET', 'http://'+SERVER+'/' + hashed)
     resp = h.getresponse()
-    out = resp.read()
-    return out
+    return resp.read()
 
 if __name__ == '__main__':
     print '----------------'
