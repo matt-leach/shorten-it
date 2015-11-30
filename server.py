@@ -6,6 +6,8 @@ from hasher import create_hash
 
 app = Flask(__name__)
 
+BANNED_HASHES = ['shorten', 'data']  # ie urls we cannot allow to be hashes
+
 
 @app.route('/shorten', methods=['POST'])
 def create_short():
@@ -23,7 +25,11 @@ def create_short():
         hashed = data['hash']
     except KeyError:
         hashed = create_hash(url)
+
     try:
+        if hashed in BANNED_HASHES:
+            # Cannot create a banned hash
+            raise DuplicateError
         create_redirect(url, hashed)
     except DuplicateError:
         return jsonify({'error': "hash '{}' already exists".format(hashed)})

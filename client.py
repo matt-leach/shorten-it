@@ -29,6 +29,9 @@ if __name__ == '__main__':
     print 'try to create shortened url with no url parameter:'
     print create_shortened_url({})
     print '----------------'
+    print 'cannot create hash shorten'
+    print create_shortened_url({'url': 'www.google.com', 'hash': 'shorten'})
+    print '-----------------'
     print 'create shortened url to google with hash "g"'
     print create_shortened_url({'url': 'www.google.com', 'hash': 'g'})
     print '----------------'
