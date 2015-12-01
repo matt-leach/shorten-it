@@ -42,7 +42,7 @@ def get_data():
     if hashed is None:
         return jsonify({'error': "No 'hashed' parameter"})
     count = get_visits(hashed)
-    return jsonify({'count': count})
+    return jsonify({'views': count})
 
 
 @app.route('/<hashed>')

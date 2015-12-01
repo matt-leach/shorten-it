@@ -44,6 +44,9 @@ if __name__ == '__main__':
     print 'try again with same hash - not allowed:'
     print create_shortened_url({'url': 'www.google.com', 'hash': 'g'})
     print '----------------'
+    print 'try with no hash:'
+    print create_shortened_url({'url': 'www.google.com'})
+    print '----------------'
     print 'now visit /g and get a 301:'
     print visit_url('g')
     print '----------------'
