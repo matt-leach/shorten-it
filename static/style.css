@@ -1,3 +1,17 @@
-h1 {
-  color: blue;
+html {
+  background-color: #FFE0C0;
+}
+
+.main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+input {
+  width: 400px;
+  height: 30px;
+  border: 1px solid black;
+  font-size: 25px;
+  padding: 5px;
 }

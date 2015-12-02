@@ -22,7 +22,7 @@ def create_short():
     ''' request.data should contain url and (optional) hash '''
     try:
         data = json.loads(request.data)
-    except TypeError:
+    except (TypeError, ValueError):
         return jsonify({'error': "Request data must be passed in as a json string"})
 
     url = data.get('url')
