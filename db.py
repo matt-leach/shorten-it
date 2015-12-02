@@ -80,7 +80,7 @@ def create_redirect(url, hashed):
 
 
 def get_redirect(hashed):
-    ''' returns an url from redirects given a hash. Riases NotFoundError if no such hash exists '''
+    ''' returns an url from redirects given a hash. Raises NotFoundError if no such hash exists '''
     sql = "SELECT original_url FROM redirects WHERE hash = %s;"
     conn = psycopg2.connect(dsn=DB_DSN)
     cur = conn.cursor()

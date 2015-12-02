@@ -1,12 +1,20 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 import flask
-from db import create_redirect, DuplicateError, get_redirect, NotFoundError, add_visit, get_visits
-import json
+
 from hasher import create_hash
+from db import create_redirect, DuplicateError, get_redirect, NotFoundError, add_visit, get_visits
+
+import json
+
 
 app = Flask(__name__)
 
 BANNED_HASHES = ['shorten', 'data']  # ie urls we cannot allow to be hashes
+
+
+@app.route('/')
+def home():
+    return render_template('home.html')
 
 
 @app.route('/shorten', methods=['POST'])
@@ -51,6 +59,7 @@ def redirect(hashed):
         redirect_url = get_redirect(hashed)
     except NotFoundError:
         return jsonify({"error": "hash '{}' does not exist".format(hashed)})
+    # print request.user_agent.platform, request.user_agent.browser, request.user_agent.version, request.user_agent.language
     add_visit(hashed)
     return flask.redirect('https://' + redirect_url)  # TODO: fix https://
 
