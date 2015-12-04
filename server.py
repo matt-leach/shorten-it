@@ -43,6 +43,7 @@ def create_short():
 
 @app.route('/data')
 def get_data():
+    ''' gets number of counts to /hash '''
     hashed = request.args.get('hash')
     if hashed is None:
         return jsonify({'error': "No 'hashed' parameter"})
@@ -62,6 +63,7 @@ def get_browser_data():
 
 @app.route('/<hashed>')
 def redirect(hashed):
+    ''' redirects from /hash to the url if it's in the database '''
     try:
         redirect_url = get_redirect(hashed)
     except NotFoundError:
