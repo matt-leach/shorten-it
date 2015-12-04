@@ -48,10 +48,12 @@ def create_visits_table():
     creates a postgres table 'visits' with columns
         hash TEXT,
         ts TIMESTAMP
+        browser TEXT
     """
     sql = 'create table visits ( \
             hash TEXT, \
-            ts TIMESTAMP \
+            ts TIMESTAMP, \
+            browser TEXT \
     )'
     conn = psycopg2.connect(dsn=DB_DSN)
     cur = conn.cursor()
@@ -112,12 +114,12 @@ def delete_hash(hashed):
     conn.close()
 
 
-def add_visit(hashed):
+def add_visit(hashed, browser=None):
     ''' add a visit to /hashed in analytics table '''
-    sql = "INSERT INTO visits (hash, ts) VALUES(%s, CURRENT_TIMESTAMP)"
+    sql = "INSERT INTO visits (hash, ts, browser) VALUES(%s, CURRENT_TIMESTAMP, %s)"
     conn = psycopg2.connect(dsn=DB_DSN)
     cur = conn.cursor()
-    cur.execute(sql, (hashed, ))
+    cur.execute(sql, (hashed, browser))
     conn.commit()
     cur.close()
     conn.close()
@@ -136,3 +138,16 @@ def get_visits(hashed):
     cur.close()
     conn.close()
     return count
+
+
+def get_browser_counts(hashed):
+    ''' get browser aggregation for /hashed '''
+    sql = "SELECT browser, sum(1) FROM visits WHERE hash = %s GROUP BY browser;"
+    conn = psycopg2.connect(dsn=DB_DSN)
+    cur = conn.cursor()
+    cur.execute(sql, (hashed,))
+    conn.commit()
+    rs = cur.fetchall()
+    cur.close()
+    conn.close()
+    return dict(rs)

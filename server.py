@@ -3,7 +3,7 @@ import flask
 
 from hasher import create_hash
 from db import create_redirect, DuplicateError, get_redirect, \
-     NotFoundError, add_visit, get_visits
+     NotFoundError, add_visit, get_visits, get_browser_counts
 
 import json
 
@@ -48,6 +48,16 @@ def get_data():
         return jsonify({'error': "No 'hashed' parameter"})
     count = get_visits(hashed)
     return jsonify({'views': count})
+
+
+@app.route('/data/browsers')
+def get_browser_data():
+    ''' get counts on which browser users are using '''
+    hashed = request.args.get('hash')
+    if hashed is None:
+        return jsonify({'error': "No 'hashed' parameter"})
+    data = get_browser_counts(hashed)
+    return jsonify({'browsers': data})
 
 
 @app.route('/<hashed>')

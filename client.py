@@ -25,12 +25,15 @@ def visit_url(hashed):
     return resp.read()
 
 
-def see_analytics(hashed):
+def print_analytics(hashed):
     ''' view analytics for the link /hashed '''
     h = httplib.HTTPConnection(SERVER)
     h.request('GET', 'http://'+SERVER+'/data?hash=' + hashed)
     resp = h.getresponse()
-    return resp.read()
+    print resp.read()
+    h.request('GET', 'http://'+SERVER+'/data/browsers?hash=' + hashed)
+    resp = h.getresponse()
+    print resp.read()
 
 
 if __name__ == '__main__':
@@ -56,7 +59,7 @@ if __name__ == '__main__':
     print 'visit a wrong code'
     print visit_url('asdf')
     print 'see count at /g'
-    print see_analytics('g')
+    print_analytics('g')
     print 'now visit g once, see increase'
     visit_url('g')
-    print see_analytics('g')
+    print_analytics('g')
