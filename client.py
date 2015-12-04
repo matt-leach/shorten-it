@@ -9,6 +9,7 @@ SERVER = 'localhost:5000'
 
 
 def create_shortened_url(data):
+    ''' connect to webapp and create a shortened url '''
     h = httplib.HTTPConnection(SERVER)
     data = json.dumps(data)
     h.request('POST', 'http://'+SERVER+'/shorten', body=data)
@@ -17,6 +18,7 @@ def create_shortened_url(data):
 
 
 def visit_url(hashed):
+    ''' visit /hashed '''
     h = httplib.HTTPConnection(SERVER)
     h.request('GET', 'http://'+SERVER+'/' + hashed)
     resp = h.getresponse()
@@ -24,6 +26,7 @@ def visit_url(hashed):
 
 
 def see_analytics(hashed):
+    ''' view analytics for the link /hashed '''
     h = httplib.HTTPConnection(SERVER)
     h.request('GET', 'http://'+SERVER+'/data?hash=' + hashed)
     resp = h.getresponse()

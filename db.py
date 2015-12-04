@@ -5,17 +5,17 @@ UNIQUE_POSTGRES_CODE = '23505'
 
 
 class DuplicateError(Exception):
+    ''' exception raised when a duplicate hash is attempted to be created '''
     pass
 
 
 class NotFoundError(Exception):
+    ''' raised when an object is not found in the database '''
     pass
 
 
 def drop_table(name):
-    """
-    drops the table 'name' if it exists
-    """
+    ''' drops the table 'name' if it exists '''
     sql = 'drop table if exists {};'.format(name)
     conn = psycopg2.connect(dsn=DB_DSN)
     cur = conn.cursor()
@@ -62,6 +62,7 @@ def create_visits_table():
 
 
 def create_redirect(url, hashed):
+    ''' create a new redirect object in db given url and hash '''
     try:
         sql = "INSERT INTO redirects (original_url, hash) VALUES(%s, %s)"
         conn = psycopg2.connect(dsn=DB_DSN)
@@ -80,7 +81,10 @@ def create_redirect(url, hashed):
 
 
 def get_redirect(hashed):
-    ''' returns an url from redirects given a hash. Raises NotFoundError if no such hash exists '''
+    '''
+    returns an url from redirects given a hash.
+    Raises NotFoundError if no such hash exists
+    '''
     sql = "SELECT original_url FROM redirects WHERE hash = %s;"
     conn = psycopg2.connect(dsn=DB_DSN)
     cur = conn.cursor()
@@ -96,6 +100,7 @@ def get_redirect(hashed):
 
 
 def add_visit(hashed):
+    ''' add a visit to /hashed in analytics table '''
     sql = "INSERT INTO visits (hash, ts) VALUES(%s, CURRENT_TIMESTAMP)"
     conn = psycopg2.connect(dsn=DB_DSN)
     cur = conn.cursor()
@@ -106,6 +111,7 @@ def add_visit(hashed):
 
 
 def get_visits(hashed):
+    ''' get number of visits to /hashed '''
     sql = "SELECT count(*) FROM visits WHERE hash = %s;"
     conn = psycopg2.connect(dsn=DB_DSN)
     cur = conn.cursor()
