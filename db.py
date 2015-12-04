@@ -99,6 +99,19 @@ def get_redirect(hashed):
         raise NotFoundError
 
 
+def delete_hash(hashed):
+    '''
+    removes a hash from the db
+    '''
+    sql = "DELETE FROM redirects WHERE hash = %s;"
+    conn = psycopg2.connect(dsn=DB_DSN)
+    cur = conn.cursor()
+    cur.execute(sql, (hashed,))
+    conn.commit()
+    cur.close()
+    conn.close()
+
+
 def add_visit(hashed):
     ''' add a visit to /hashed in analytics table '''
     sql = "INSERT INTO visits (hash, ts) VALUES(%s, CURRENT_TIMESTAMP)"

@@ -2,7 +2,8 @@ from flask import Flask, request, jsonify, render_template
 import flask
 
 from hasher import create_hash
-from db import create_redirect, DuplicateError, get_redirect, NotFoundError, add_visit, get_visits
+from db import create_redirect, DuplicateError, get_redirect, \
+     NotFoundError, add_visit, get_visits
 
 import json
 
@@ -36,7 +37,8 @@ def create_short():
         create_redirect(url, hashed)
     except DuplicateError:
         return jsonify({'error': "hash '{}' already exists".format(hashed)})
-    return jsonify({'redirect': hashed})
+
+    return jsonify({'redirect': "/{}".format(hashed)})
 
 
 @app.route('/data')
@@ -54,8 +56,7 @@ def redirect(hashed):
         redirect_url = get_redirect(hashed)
     except NotFoundError:
         return jsonify({"error": "hash '{}' does not exist".format(hashed)})
-    # print request.user_agent.platform, request.user_agent.browser, request.user_agent.version, request.user_agent.language
-    add_visit(hashed)
+    add_visit(hashed, request.user_agent.browser)
     return flask.redirect('https://' + redirect_url)  # TODO: fix https://
 
 
