@@ -12,11 +12,6 @@ app = Flask(__name__)
 BANNED_HASHES = ['shorten', 'data']  # ie urls we cannot allow to be hashes
 
 
-@app.route('/')
-def home():
-    return render_template('home.html')
-
-
 @app.route('/shorten', methods=['POST'])
 def create_short():
     ''' request.data should contain url and (optional) hash '''
