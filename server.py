@@ -69,7 +69,9 @@ def redirect(hashed):
     except NotFoundError:
         return jsonify({"error": "hash '{}' does not exist".format(hashed)})
     add_visit(hashed, request.user_agent.browser)
-    return flask.redirect('https://' + redirect_url)  # TODO: fix https://
+    if 'http://' not in redirect_url and 'https://' not in redirect_url:
+        redirect_url = 'https://' + redirect_url
+    return flask.redirect(redirect_url)  # TODO: fix https://
 
 
 if __name__ == '__main__':

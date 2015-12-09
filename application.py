@@ -1,3 +1,5 @@
+# For elastic beanstalk
+
 from server import app as application
 
 if __name__ == '__main__':
