@@ -1,17 +1,11 @@
+# Contains code used to connect to the database
+
 from secret import DB_DSN
+from exceptions import DuplicateError, NotFoundError
+
 import psycopg2
 
 UNIQUE_POSTGRES_CODE = '23505'
-
-
-class DuplicateError(Exception):
-    ''' exception raised when a duplicate hash is attempted to be created '''
-    pass
-
-
-class NotFoundError(Exception):
-    ''' raised when an object is not found in the database '''
-    pass
 
 
 def drop_table(name):

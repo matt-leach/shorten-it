@@ -2,9 +2,9 @@ from flask import Flask, request, jsonify, render_template
 import flask
 
 from hasher import create_hash
-from db import create_redirect, DuplicateError, get_redirect, \
-     NotFoundError, add_visit, get_visits, get_browser_counts
-
+from db import create_redirect, get_redirect, \
+               add_visit, get_visits, get_browser_counts
+from exceptions import NotFoundError, DuplicateError
 import json
 
 
